@@ -1,17 +1,7 @@
 /**
- * Copyright 2020 Google Inc. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * @license
+ * Copyright 2020 Google Inc.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 /**
@@ -55,19 +45,19 @@ export type LowerCasePaperFormat =
  *
  * - `Ledger`: 17in x 11in
  *
- * - `A0`: 33.1in x 46.8in
+ * - `A0`: 33.1102in x 46.811in
  *
- * - `A1`: 23.4in x 33.1in
+ * - `A1`: 23.3858in x 33.1102in
  *
- * - `A2`: 16.54in x 23.4in
+ * - `A2`: 16.5354in x 23.3858in
  *
- * - `A3`: 11.7in x 16.54in
+ * - `A3`: 11.6929in x 16.5354in
  *
- * - `A4`: 8.27in x 11.7in
+ * - `A4`: 8.2677in x 11.6929in
  *
- * - `A5`: 5.83in x 8.27in
+ * - `A5`: 5.8268in x 8.2677in
  *
- * - `A6`: 4.13in x 5.83in
+ * - `A6`: 4.1339in x 5.8268in
  *
  * @public
  */
@@ -83,12 +73,12 @@ export type PaperFormat =
 export interface PDFOptions {
   /**
    * Scales the rendering of the web page. Amount must be between `0.1` and `2`.
-   * @defaultValue 1
+   * @defaultValue `1`
    */
   scale?: number;
   /**
    * Whether to show the header and footer.
-   * @defaultValue false
+   * @defaultValue `false`
    */
   displayHeaderFooter?: boolean;
   /**
@@ -113,12 +103,12 @@ export interface PDFOptions {
   footerTemplate?: string;
   /**
    * Set to `true` to print background graphics.
-   * @defaultValue false
+   * @defaultValue `false`
    */
   printBackground?: boolean;
   /**
    * Whether to print in landscape orientation.
-   * @defaultValue = false
+   * @defaultValue `false`
    */
   landscape?: boolean;
   /**
@@ -148,7 +138,7 @@ export interface PDFOptions {
   preferCSSPageSize?: boolean;
   /**
    * Set the PDF margins.
-   * @defaultValue no margins are set.
+   * @defaultValue `undefined` no margins are set.
    */
   margin?: PDFMargin;
   /**
@@ -158,19 +148,44 @@ export interface PDFOptions {
    *
    * If the path is relative, it's resolved relative to the current working directory.
    *
-   * @defaultValue the empty string, which means the PDF will not be written to disk.
+   * @defaultValue `undefined`, which means the PDF will not be written to disk.
    */
   path?: string;
   /**
    * Hides default white background and allows generating pdfs with transparency.
-   * @defaultValue false
+   * @defaultValue `false`
    */
   omitBackground?: boolean;
   /**
+   * Generate tagged (accessible) PDF.
+   *
+   * @defaultValue `true`
+   * @experimental
+   */
+  tagged?: boolean;
+  /**
+   * Generate document outline.
+   *
+   * @defaultValue `false`
+   * @experimental
+   */
+  outline?: boolean;
+  /**
    * Timeout in milliseconds. Pass `0` to disable timeout.
-   * @defaultValue 30000
+   *
+   * The default value can be changed by using {@link Page.setDefaultTimeout}
+   *
+   * @defaultValue `30_000`
    */
   timeout?: number;
+  /**
+   * If true, waits for `document.fonts.ready` to resolve. This might require
+   * activating the page using {@link Page.bringToFront} if the page is in the
+   * background.
+   *
+   * @defaultValue `true`
+   */
+  waitForFonts?: boolean;
 }
 
 /**
@@ -184,19 +199,38 @@ export interface PaperFormatDimensions {
 /**
  * @internal
  */
-export const _paperFormats: Record<
-  LowerCasePaperFormat,
-  PaperFormatDimensions
-> = {
-  letter: {width: 8.5, height: 11},
-  legal: {width: 8.5, height: 14},
-  tabloid: {width: 11, height: 17},
-  ledger: {width: 17, height: 11},
-  a0: {width: 33.1, height: 46.8},
-  a1: {width: 23.4, height: 33.1},
-  a2: {width: 16.54, height: 23.4},
-  a3: {width: 11.7, height: 16.54},
-  a4: {width: 8.27, height: 11.7},
-  a5: {width: 5.83, height: 8.27},
-  a6: {width: 4.13, height: 5.83},
-} as const;
+export interface ParsedPDFOptionsInterface {
+  width: number;
+  height: number;
+  margin: {
+    top: number;
+    bottom: number;
+    left: number;
+    right: number;
+  };
+}
+
+/**
+ * @internal
+ */
+export type ParsedPDFOptions = Required<
+  Omit<PDFOptions, 'path' | 'format' | 'timeout'> & ParsedPDFOptionsInterface
+>;
+
+/**
+ * @internal
+ */
+export const paperFormats: Record<LowerCasePaperFormat, PaperFormatDimensions> =
+  {
+    letter: {width: 8.5, height: 11},
+    legal: {width: 8.5, height: 14},
+    tabloid: {width: 11, height: 17},
+    ledger: {width: 17, height: 11},
+    a0: {width: 33.1102, height: 46.811},
+    a1: {width: 23.3858, height: 33.1102},
+    a2: {width: 16.5354, height: 23.3858},
+    a3: {width: 11.6929, height: 16.5354},
+    a4: {width: 8.2677, height: 11.6929},
+    a5: {width: 5.8268, height: 8.2677},
+    a6: {width: 4.1339, height: 5.8268},
+  } as const;
