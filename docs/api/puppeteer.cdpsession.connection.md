@@ -4,11 +4,13 @@ sidebar_label: CDPSession.connection
 
 # CDPSession.connection() method
 
-#### Signature:
+The underlying connection for this session, if any.
+
+### Signature
 
 ```typescript
 class CDPSession {
-  connection(): Connection | undefined;
+  abstract connection(): Connection | undefined;
 }
 ```
 
